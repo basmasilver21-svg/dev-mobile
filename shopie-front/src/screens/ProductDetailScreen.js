@@ -1,54 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
   Image,
   StyleSheet,
-  TouchableOpacity,
   ScrollView,
-  Alert,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
 import { API_CONFIG } from '../config/api';
 
-export default function ProductDetailScreen({ route, navigation }) {
+export default function ProductDetailScreen({ route }) {
   const { product } = route.params;
-  const [quantity, setQuantity] = useState(1);
-  const { addToCart } = useCart();
-  const { user } = useAuth();
-  
-  const isAdmin = user?.role === 'ADMIN';
-
-  const handleAddToCart = async () => {
-    const result = await addToCart(product.id, quantity);
-    if (result.success) {
-      Alert.alert(
-        'Succès', 
-        `${quantity} ${product.nom} ajouté(s) au panier`,
-        [
-          { text: 'Continuer', style: 'default' },
-          { 
-            text: 'Voir le panier', 
-            onPress: () => navigation.navigate('Main', { screen: 'Panier' })
-          }
-        ]
-      );
-    } else {
-      Alert.alert('Erreur', result.error || 'Impossible d\'ajouter au panier');
-    }
-  };
-
-  const increaseQuantity = () => {
-    setQuantity(quantity + 1);
-  };
-
-  const decreaseQuantity = () => {
-    if (quantity > 1) {
-      setQuantity(quantity - 1);
-    }
-  };
 
   return (
     <ScrollView style={styles.container}>
@@ -77,35 +38,7 @@ export default function ProductDetailScreen({ route, navigation }) {
           {product.description || 'Aucune description disponible.'}
         </Text>
 
-        <Text style={styles.sectionTitle}>Quantité</Text>
-        <View style={styles.quantityContainer}>
-          <TouchableOpacity
-            style={[styles.quantityButton, quantity <= 1 && styles.quantityButtonDisabled]}
-            onPress={decreaseQuantity}
-            disabled={quantity <= 1}
-          >
-            <Ionicons name="remove" size={20} color={quantity <= 1 ? "#ccc" : "#6366f1"} />
-          </TouchableOpacity>
-          
-          <Text style={styles.quantityText}>{quantity}</Text>
-          
-          <TouchableOpacity
-            style={styles.quantityButton}
-            onPress={increaseQuantity}
-          >
-            <Ionicons name="add" size={20} color="#6366f1" />
-          </TouchableOpacity>
-        </View>
 
-        <TouchableOpacity
-          style={styles.addToCartButton}
-          onPress={handleAddToCart}
-        >
-          <Ionicons name="cart" size={20} color="white" style={styles.buttonIcon} />
-          <Text style={styles.addToCartText}>
-            Ajouter au panier - {(product.prix * quantity).toFixed(2)} €
-          </Text>
-        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -160,47 +93,6 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: '#666',
     marginBottom: 20,
-  },
-  quantityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 30,
-  },
-  quantityButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: '#6366f1',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  quantityButtonDisabled: {
-    borderColor: '#ccc',
-  },
-  quantityText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginHorizontal: 20,
-    minWidth: 30,
-    textAlign: 'center',
-  },
-  addToCartButton: {
-    backgroundColor: '#6366f1',
-    borderRadius: 10,
-    height: 50,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonIcon: {
-    marginRight: 10,
-  },
-  addToCartText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   outOfStockContainer: {
     flexDirection: 'row',
