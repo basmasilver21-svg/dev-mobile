@@ -47,7 +47,7 @@ export default function LoginScreen({ navigation }) {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <LinearGradient
-        colors={['#6366f1', '#8b5cf6']}
+        colors={['#1e293b', '#334155']}
         style={styles.gradient}
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -58,7 +58,7 @@ export default function LoginScreen({ navigation }) {
 
           <View style={styles.form}>
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={20} color="#64748b" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="Email"
@@ -66,19 +66,19 @@ export default function LoginScreen({ navigation }) {
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
-                placeholderTextColor="#666"
+                placeholderTextColor="#94a3b8"
               />
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={20} color="#64748b" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="Mot de passe"
                 value={motDePasse}
                 onChangeText={setMotDePasse}
                 secureTextEntry={!showPassword}
-                placeholderTextColor="#666"
+                placeholderTextColor="#94a3b8"
               />
               <TouchableOpacity
                 onPress={() => setShowPassword(!showPassword)}
@@ -87,7 +87,7 @@ export default function LoginScreen({ navigation }) {
                 <Ionicons 
                   name={showPassword ? "eye-outline" : "eye-off-outline"} 
                   size={20} 
-                  color="#666" 
+                  color="#64748b" 
                 />
               </TouchableOpacity>
             </View>
@@ -138,93 +138,111 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 50,
+    marginBottom: 60,
   },
   title: {
-    fontSize: 48,
-    fontWeight: 'bold',
+    fontSize: 42,
+    fontWeight: '700',
     color: 'white',
-    marginBottom: 10,
+    marginBottom: 8,
+    letterSpacing: 1,
   },
   subtitle: {
-    fontSize: 18,
-    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 16,
+    color: 'rgba(255, 255, 255, 0.7)',
+    fontWeight: '300',
   },
   form: {
     backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 30,
+    borderRadius: 24,
+    padding: 32,
+    marginHorizontal: 4,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 8,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 10,
-    marginBottom: 15,
-    paddingHorizontal: 15,
-    backgroundColor: '#f9f9f9',
+    borderWidth: 1.5,
+    borderColor: '#e2e8f0',
+    borderRadius: 12,
+    marginBottom: 20,
+    paddingHorizontal: 16,
+    backgroundColor: '#f8fafc',
+    height: 56,
   },
   inputIcon: {
-    marginRight: 10,
+    marginRight: 12,
+    color: '#64748b',
   },
   input: {
     flex: 1,
-    height: 50,
     fontSize: 16,
+    color: '#1e293b',
+    fontWeight: '400',
   },
   eyeIcon: {
-    padding: 5,
+    padding: 8,
   },
   button: {
-    backgroundColor: '#6366f1',
-    borderRadius: 10,
-    height: 50,
+    backgroundColor: '#0f172a',
+    borderRadius: 12,
+    height: 56,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 16,
+    shadowColor: '#0f172a',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
   buttonDisabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#94a3b8',
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    letterSpacing: 0.5,
   },
   adminButton: {
-    backgroundColor: '#f59e0b',
-    borderRadius: 10,
-    height: 40,
+    backgroundColor: '#475569',
+    borderRadius: 12,
+    height: 48,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: '#64748b',
   },
   adminButtonText: {
     color: 'white',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '500',
   },
   registerContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: 20,
+    marginTop: 24,
   },
   registerText: {
-    color: '#666',
-    fontSize: 16,
+    color: '#64748b',
+    fontSize: 15,
+    fontWeight: '400',
   },
   registerLink: {
-    color: '#6366f1',
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#0f172a',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });
