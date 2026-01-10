@@ -29,18 +29,20 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const menuItems = [
-    {
-      id: 'orders',
-      title: 'Mes commandes',
-      icon: 'receipt-outline',
-      onPress: () => navigation.navigate('Commandes'),
-    },
-    {
-      id: 'cart',
-      title: 'Mon panier',
-      icon: 'cart-outline',
-      onPress: () => navigation.navigate('Panier'),
-    },
+    ...(user?.role !== 'ADMIN' ? [
+      {
+        id: 'orders',
+        title: 'Mes commandes',
+        icon: 'receipt-outline',
+        onPress: () => navigation.navigate('Commandes'),
+      },
+      {
+        id: 'cart',
+        title: 'Mon panier',
+        icon: 'cart-outline',
+        onPress: () => navigation.navigate('Panier'),
+      },
+    ] : []),
     ...(user?.role === 'ADMIN' ? [{
       id: 'admin',
       title: 'Administration',

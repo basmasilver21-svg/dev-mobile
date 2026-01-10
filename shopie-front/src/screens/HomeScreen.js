@@ -269,19 +269,21 @@ export default function HomeScreen({ navigation }) {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <Text style={styles.title}>Shopie</Text>
-          <TouchableOpacity 
-            style={styles.cartButton}
-            onPress={() => navigation.navigate('Panier')}
-          >
-            <Ionicons name="cart-outline" size={24} color="#64748b" />
-            {getCartItemsCount() > 0 && (
-              <View style={styles.cartBadgeHeader}>
-                <Text style={styles.cartBadgeHeaderText}>
-                  {getCartItemsCount()}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
+          {user?.role !== 'ADMIN' && (
+            <TouchableOpacity 
+              style={styles.cartButton}
+              onPress={() => navigation.navigate('Panier')}
+            >
+              <Ionicons name="cart-outline" size={24} color="#64748b" />
+              {getCartItemsCount() > 0 && (
+                <View style={styles.cartBadgeHeader}>
+                  <Text style={styles.cartBadgeHeaderText}>
+                    {getCartItemsCount()}
+                  </Text>
+                </View>
+              )}
+            </TouchableOpacity>
+          )}
         </View>
         <View style={styles.searchContainer}>
           <Ionicons name="search" size={20} color="#64748b" style={styles.searchIcon} />

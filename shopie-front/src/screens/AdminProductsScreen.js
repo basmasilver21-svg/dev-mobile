@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { useFocusEffect } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
 import { API_CONFIG } from '../config/api';
 
 export default function AdminProductsScreen({ navigation }) {
@@ -35,9 +35,9 @@ export default function AdminProductsScreen({ navigation }) {
   });
   const [selectedImage, setSelectedImage] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
 
   const { authenticatedRequest, user, token } = useAuth();
-  const { getCartItemsCount } = useCart();
 
   useEffect(() => {
     if (user?.role !== 'ADMIN') {
@@ -48,6 +48,15 @@ export default function AdminProductsScreen({ navigation }) {
     loadProducts();
     loadCategories();
   }, []);
+
+  // Recharger les catégories quand l'écran reçoit le focus
+  useFocusEffect(
+    React.useCallback(() => {
+      if (user?.role === 'ADMIN') {
+        loadCategories();
+      }
+    }, [user])
+  );
 
   const loadProducts = async () => {
     try {
@@ -64,8 +73,19 @@ export default function AdminProductsScreen({ navigation }) {
 
   const loadCategories = async () => {
     try {
+      console.log('=== LOADING CATEGORIES ===');
       const response = await authenticatedRequest(API_CONFIG.ENDPOINTS.CATEGORIES);
+      console.log('Categories API response:', response);
+      console.log('Categories count:', response?.length || 0);
+      
+      if (response && Array.isArray(response)) {
+        response.forEach((cat, index) => {
+          console.log(`Category ${index + 1}: ${cat.nom} (ID: ${cat.id})`);
+        });
+      }
+      
       setCategories(response || []);
+      console.log('Categories state updated');
     } catch (error) {
       console.error('Error loading categories:', error);
       Alert.alert('Erreur', 'Impossible de charger les catégories');
@@ -74,8 +94,7 @@ export default function AdminProductsScreen({ navigation }) {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadProducts();
-    await loadCategories();
+    await Promise.all([loadProducts(), loadCategories()]);
     setRefreshing(false);
   };
 
@@ -325,19 +344,6 @@ export default function AdminProductsScreen({ navigation }) {
       <View style={styles.header}>
         <Text style={styles.title}>Gestion des Produits</Text>
         <View style={styles.headerActions}>
-          <TouchableOpacity 
-            style={styles.cartButton}
-            onPress={() => navigation.navigate('Panier')}
-          >
-            <Ionicons name="cart-outline" size={24} color="#6366f1" />
-            {getCartItemsCount() > 0 && (
-              <View style={styles.cartBadge}>
-                <Text style={styles.cartBadgeText}>
-                  {getCartItemsCount()}
-                </Text>
-              </View>
-            )}
-          </TouchableOpacity>
           <TouchableOpacity style={styles.addButton} onPress={openCreateModal}>
             <Ionicons name="add" size={24} color="white" />
           </TouchableOpacity>
@@ -395,34 +401,68 @@ export default function AdminProductsScreen({ navigation }) {
               </View>
 
               <View style={styles.formGroup}>
-                <Text style={styles.label}>Catégorie</Text>
+                <View style={styles.labelWithAction}>
+                  <Text style={styles.label}>Catégorie</Text>
+                  <TouchableOpacity
+                    style={styles.refreshCategoriesButton}
+                    onPress={loadCategories}
+                  >
+                    <Ionicons name="refresh" size={16} color="#6366f1" />
+                    <Text style={styles.refreshCategoriesText}>Actualiser</Text>
+                  </TouchableOpacity>
+                </View>
                 <View style={styles.pickerContainer}>
                   <TouchableOpacity
                     style={styles.pickerButton}
                     onPress={() => {
-                      Alert.alert(
-                        'Sélectionner une catégorie',
-                        '',
-                        [
-                          { text: 'Aucune catégorie', onPress: () => setFormData({ ...formData, categoryId: '' }) },
-                          ...categories.map(category => ({
-                            text: category.nom,
-                            onPress: () => setFormData({ ...formData, categoryId: category.id.toString() })
-                          })),
-                          { text: 'Annuler', style: 'cancel' }
-                        ]
-                      );
+                      console.log('=== CATEGORY SELECTOR CLICKED ===');
+                      console.log('Available categories:', categories);
+                      console.log('Categories count:', categories.length);
+                      
+                      if (categories.length === 0) {
+                        Alert.alert(
+                          'Aucune catégorie',
+                          'Aucune catégorie disponible. Voulez-vous en créer une ?',
+                          [
+                            { text: 'Annuler', style: 'cancel' },
+                            { 
+                              text: 'Créer une catégorie', 
+                              onPress: () => {
+                                setModalVisible(false);
+                                navigation.navigate('AdminCategories');
+                              }
+                            }
+                          ]
+                        );
+                        return;
+                      }
+                      
+                      setCategoryModalVisible(true);
                     }}
                   >
                     <Text style={styles.pickerButtonText}>
                       {formData.categoryId 
                         ? categories.find(c => c.id.toString() === formData.categoryId)?.nom || 'Catégorie inconnue'
-                        : 'Sélectionner une catégorie'
+                        : categories.length === 0 
+                          ? 'Aucune catégorie disponible'
+                          : 'Sélectionner une catégorie'
                       }
                     </Text>
                     <Ionicons name="chevron-down" size={20} color="#666" />
                   </TouchableOpacity>
                 </View>
+                {categories.length === 0 && (
+                  <TouchableOpacity
+                    style={styles.createCategoryButton}
+                    onPress={() => {
+                      setModalVisible(false);
+                      navigation.navigate('AdminCategories');
+                    }}
+                  >
+                    <Ionicons name="add-circle-outline" size={20} color="#6366f1" />
+                    <Text style={styles.createCategoryText}>Créer une nouvelle catégorie</Text>
+                  </TouchableOpacity>
+                )}
               </View>
 
               <View style={styles.formGroup}>
@@ -545,6 +585,104 @@ export default function AdminProductsScreen({ navigation }) {
           </View>
         </View>
       </Modal>
+
+      {/* Modal pour sélectionner une catégorie */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={categoryModalVisible}
+        onRequestClose={() => setCategoryModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.categoryModalContent}>
+            <View style={styles.categoryModalHeader}>
+              <Text style={styles.categoryModalTitle}>Sélectionner une catégorie</Text>
+              <TouchableOpacity onPress={() => setCategoryModalVisible(false)}>
+                <Ionicons name="close" size={24} color="#666" />
+              </TouchableOpacity>
+            </View>
+            
+            <ScrollView style={styles.categoryList} showsVerticalScrollIndicator={false}>
+              {/* Option "Aucune catégorie" */}
+              <TouchableOpacity
+                style={[
+                  styles.categoryOption,
+                  !formData.categoryId && styles.categoryOptionSelected
+                ]}
+                onPress={() => {
+                  setFormData({ ...formData, categoryId: '' });
+                  setCategoryModalVisible(false);
+                }}
+              >
+                <View style={styles.categoryOptionContent}>
+                  <Ionicons name="close-circle-outline" size={24} color="#666" />
+                  <Text style={[
+                    styles.categoryOptionText,
+                    !formData.categoryId && styles.categoryOptionTextSelected
+                  ]}>
+                    Aucune catégorie
+                  </Text>
+                </View>
+                {!formData.categoryId && (
+                  <Ionicons name="checkmark" size={24} color="#6366f1" />
+                )}
+              </TouchableOpacity>
+
+              {/* Liste des catégories */}
+              {categories.map((category) => {
+                const isSelected = formData.categoryId === category.id.toString();
+                return (
+                  <TouchableOpacity
+                    key={category.id}
+                    style={[
+                      styles.categoryOption,
+                      isSelected && styles.categoryOptionSelected
+                    ]}
+                    onPress={() => {
+                      setFormData({ ...formData, categoryId: category.id.toString() });
+                      setCategoryModalVisible(false);
+                    }}
+                  >
+                    <View style={styles.categoryOptionContent}>
+                      <Ionicons name="folder-outline" size={24} color="#6366f1" />
+                      <View style={styles.categoryOptionInfo}>
+                        <Text style={[
+                          styles.categoryOptionText,
+                          isSelected && styles.categoryOptionTextSelected
+                        ]}>
+                          {category.nom}
+                        </Text>
+                        {category.description && (
+                          <Text style={styles.categoryOptionDescription}>
+                            {category.description}
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                    {isSelected && (
+                      <Ionicons name="checkmark" size={24} color="#6366f1" />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+
+            <View style={styles.categoryModalActions}>
+              <TouchableOpacity
+                style={styles.createCategoryFromModalButton}
+                onPress={() => {
+                  setCategoryModalVisible(false);
+                  setModalVisible(false);
+                  navigation.navigate('AdminCategories');
+                }}
+              >
+                <Ionicons name="add-circle-outline" size={20} color="#6366f1" />
+                <Text style={styles.createCategoryFromModalText}>Créer une nouvelle catégorie</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -572,26 +710,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-  },
-  cartButton: {
-    position: 'relative',
-    padding: 8,
-  },
-  cartBadge: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    backgroundColor: '#ef4444',
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cartBadgeText: {
-    color: 'white',
-    fontSize: 12,
-    fontWeight: 'bold',
   },
   addButton: {
     backgroundColor: '#007AFF',
@@ -823,5 +941,131 @@ const styles = StyleSheet.create({
   pickerButtonText: {
     fontSize: 16,
     color: '#333',
+  },
+  labelWithAction: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  refreshCategoriesButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+    backgroundColor: '#f0f0ff',
+  },
+  refreshCategoriesText: {
+    fontSize: 12,
+    color: '#6366f1',
+    marginLeft: 4,
+    fontWeight: '600',
+  },
+  createCategoryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    marginTop: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#6366f1',
+    borderStyle: 'dashed',
+    backgroundColor: '#f8f9ff',
+  },
+  createCategoryText: {
+    fontSize: 14,
+    color: '#6366f1',
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  createCategoryFromModalText: {
+    fontSize: 14,
+    color: '#6366f1',
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  categoryModalContent: {
+    backgroundColor: 'white',
+    borderRadius: 16,
+    padding: 20,
+    width: '90%',
+    maxHeight: '70%',
+  },
+  categoryModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  categoryModalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  categoryList: {
+    maxHeight: 300,
+  },
+  categoryOption: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 16,
+    marginBottom: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    backgroundColor: '#f9fafb',
+  },
+  categoryOptionSelected: {
+    borderColor: '#6366f1',
+    backgroundColor: '#f0f0ff',
+  },
+  categoryOptionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  categoryOptionInfo: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  categoryOptionText: {
+    fontSize: 16,
+    color: '#374151',
+    fontWeight: '500',
+  },
+  categoryOptionTextSelected: {
+    color: '#6366f1',
+    fontWeight: '600',
+  },
+  categoryOptionDescription: {
+    fontSize: 12,
+    color: '#6b7280',
+    marginTop: 2,
+  },
+  categoryModalActions: {
+    marginTop: 20,
+    paddingTop: 15,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+  },
+  createCategoryFromModalButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#6366f1',
+    borderStyle: 'dashed',
+    backgroundColor: '#f8f9ff',
   },
 });

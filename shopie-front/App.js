@@ -42,10 +42,6 @@ function TabNavigator() {
           let iconName;
           if (route.name === 'Accueil') {
             iconName = focused ? 'home' : 'home-outline';
-          } else if (route.name === 'Panier') {
-            iconName = focused ? 'cart' : 'cart-outline';
-          } else if (route.name === 'Commandes') {
-            iconName = focused ? 'list' : 'list-outline';
           } else if (route.name === 'Profil') {
             iconName = focused ? 'person' : 'person-outline';
           } else if (route.name === 'Admin') {
@@ -59,8 +55,6 @@ function TabNavigator() {
       })}
     >
       <Tab.Screen name="Accueil" component={HomeScreen} />
-      <Tab.Screen name="Panier" component={CartScreen} />
-      <Tab.Screen name="Commandes" component={OrdersScreen} />
       <Tab.Screen name="Profil" component={ProfileScreen} />
       {isAdmin && (
         <Tab.Screen 
@@ -94,6 +88,16 @@ function AppStack() {
         name="Search" 
         component={SearchScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="Panier" 
+        component={CartScreen}
+        options={{ title: 'Panier' }}
+      />
+      <Stack.Screen 
+        name="Commandes" 
+        component={OrdersScreen}
+        options={{ title: 'Mes Commandes' }}
       />
       <Stack.Screen 
         name="ProductDetail" 

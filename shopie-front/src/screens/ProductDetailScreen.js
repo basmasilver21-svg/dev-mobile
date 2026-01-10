@@ -10,12 +10,16 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import { API_CONFIG } from '../config/api';
 
 export default function ProductDetailScreen({ route, navigation }) {
   const { product } = route.params;
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
+  const { user } = useAuth();
+  
+  const isAdmin = user?.role === 'ADMIN';
 
   const handleAddToCart = async () => {
     const result = await addToCart(product.id, quantity);
