@@ -248,33 +248,13 @@ export default function HomeScreen({ navigation }) {
             )}
           </View>
           
-          {/* Stock display removed - products always appear available */}
-          {/* <View style={styles.stockContainer}>
-            <Text style={[
-              styles.stockText,
-              item.stock === 0 && styles.outOfStock,
-              item.stock < 10 && item.stock > 0 && styles.lowStock
-            ]}>
-              {item.stock === 0 ? 'Rupture de stock' : `Stock: ${item.stock}`}
-            </Text>
-            {isInCart && !isAdmin && (
-              <TouchableOpacity
-                style={styles.removeButton}
-                onPress={() => handleRemoveFromCart(item.id)}
-              >
-                <Ionicons name="trash-outline" size={14} color="#ef4444" />
-                <Text style={styles.removeButtonText}>Retirer</Text>
-              </TouchableOpacity>
-            )}
-          </View> */}
-          
           {isInCart && !isAdmin && (
             <View style={styles.removeButtonContainer}>
               <TouchableOpacity
                 style={styles.removeButton}
                 onPress={() => handleRemoveFromCart(item.id)}
               >
-                <Ionicons name="trash-outline" size={14} color="#ef4444" />
+                <Ionicons name="trash-outline" size={14} color="#dc2626" />
                 <Text style={styles.removeButtonText}>Retirer</Text>
               </TouchableOpacity>
             </View>
@@ -293,7 +273,7 @@ export default function HomeScreen({ navigation }) {
             style={styles.cartButton}
             onPress={() => navigation.navigate('Panier')}
           >
-            <Ionicons name="cart-outline" size={24} color="#6366f1" />
+            <Ionicons name="cart-outline" size={24} color="#64748b" />
             {getCartItemsCount() > 0 && (
               <View style={styles.cartBadgeHeader}>
                 <Text style={styles.cartBadgeHeaderText}>
@@ -304,13 +284,13 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </View>
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color="#64748b" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Rechercher des produits..."
             value={searchQuery}
             onChangeText={handleSearch}
-            placeholderTextColor="#666"
+            placeholderTextColor="#94a3b8"
           />
           <TouchableOpacity
             style={styles.filterButton}
@@ -319,7 +299,7 @@ export default function HomeScreen({ navigation }) {
             <Ionicons 
               name={selectedCategory ? "funnel" : "funnel-outline"} 
               size={20} 
-              color={selectedCategory ? "#6366f1" : "#666"} 
+              color={selectedCategory ? "#3b82f6" : "#64748b"} 
             />
           </TouchableOpacity>
           <TouchableOpacity
@@ -329,7 +309,7 @@ export default function HomeScreen({ navigation }) {
               initialCategory: selectedCategory 
             })}
           >
-            <Ionicons name="options-outline" size={20} color="#666" />
+            <Ionicons name="options-outline" size={20} color="#64748b" />
           </TouchableOpacity>
         </View>
         
@@ -380,7 +360,7 @@ export default function HomeScreen({ navigation }) {
               style={styles.clearFilterButton}
               onPress={clearFilters}
             >
-              <Ionicons name="close" size={16} color="#6366f1" />
+              <Ionicons name="close" size={16} color="#1d4ed8" />
               <Text style={styles.clearFilterText}>Effacer</Text>
             </TouchableOpacity>
           </View>
@@ -409,7 +389,7 @@ export default function HomeScreen({ navigation }) {
         }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="storefront-outline" size={64} color="#ccc" />
+            <Ionicons name="storefront-outline" size={64} color="#cbd5e1" />
             <Text style={styles.emptyText}>
               {loading ? 'Chargement...' : 
                selectedCategory ? `Aucun produit dans "${selectedCategory.nom}"` :
@@ -434,118 +414,155 @@ export default function HomeScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f8fafc',
   },
   header: {
-    backgroundColor: 'white',
+    backgroundColor: '#ffffff',
     paddingTop: 50,
     paddingHorizontal: 20,
     paddingBottom: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 4,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e2e8f0',
   },
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
+    marginBottom: 20,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#6366f1',
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#1e293b',
+    letterSpacing: -0.5,
   },
   cartButton: {
     position: 'relative',
-    padding: 8,
+    padding: 12,
+    backgroundColor: '#f1f5f9',
+    borderRadius: 12,
+    shadowColor: '#64748b',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   cartBadgeHeader: {
     position: 'absolute',
-    top: 0,
-    right: 0,
+    top: -2,
+    right: -2,
     backgroundColor: '#ef4444',
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
+    borderRadius: 12,
+    minWidth: 24,
+    height: 24,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#ffffff',
   },
   cartBadgeHeaderText: {
     color: 'white',
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f9f9f9',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    height: 45,
+    backgroundColor: '#f1f5f9',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    height: 52,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
   },
   searchIcon: {
-    marginRight: 10,
+    marginRight: 12,
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
+    color: '#334155',
+    fontWeight: '500',
   },
   filterButton: {
-    padding: 8,
+    padding: 12,
     marginLeft: 8,
+    backgroundColor: '#f1f5f9',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
   },
   advancedSearchButton: {
-    padding: 8,
+    padding: 12,
     marginLeft: 4,
+    backgroundColor: '#f1f5f9',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
   },
   categoryFilter: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 10,
-    gap: 8,
+    marginTop: 16,
+    gap: 10,
   },
   categoryChip: {
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    borderColor: '#e2e8f0',
+    shadowColor: '#64748b',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   categoryChipActive: {
-    backgroundColor: '#6366f1',
-    borderColor: '#6366f1',
+    backgroundColor: '#3b82f6',
+    borderColor: '#3b82f6',
+    shadowColor: '#3b82f6',
+    shadowOpacity: 0.3,
   },
   categoryChipText: {
-    fontSize: 12,
-    color: '#666',
-    fontWeight: '500',
+    fontSize: 13,
+    color: '#64748b',
+    fontWeight: '600',
   },
   categoryChipTextActive: {
     color: 'white',
-    fontWeight: '600',
+    fontWeight: '700',
   },
   activeFilterContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 10,
-    padding: 8,
-    backgroundColor: '#f0f0ff',
-    borderRadius: 8,
-    borderLeftWidth: 3,
-    borderLeftColor: '#6366f1',
+    marginTop: 12,
+    padding: 12,
+    backgroundColor: '#eff6ff',
+    borderRadius: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3b82f6',
   },
   activeFilterText: {
-    fontSize: 12,
-    color: '#6366f1',
-    fontWeight: '500',
+    fontSize: 13,
+    color: '#1d4ed8',
+    fontWeight: '600',
   },
   clearFilterButton: {
     flexDirection: 'row',
@@ -553,94 +570,113 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   clearFilterText: {
-    fontSize: 12,
-    color: '#6366f1',
-    fontWeight: '500',
+    fontSize: 13,
+    color: '#1d4ed8',
+    fontWeight: '600',
   },
   productList: {
-    padding: 10,
+    padding: 16,
   },
   productCard: {
     flex: 1,
-    backgroundColor: 'white',
-    margin: 5,
-    borderRadius: 10,
-    shadowColor: '#000',
+    backgroundColor: '#ffffff',
+    margin: 6,
+    borderRadius: 16,
+    shadowColor: '#64748b',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 6,
+    position: 'relative',
+    borderWidth: 1,
+    borderColor: '#f1f5f9',
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: '#ef4444',
+    borderRadius: 14,
+    width: 28,
+    height: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+    borderWidth: 2,
+    borderColor: '#ffffff',
+    shadowColor: '#ef4444',
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 3,
-    position: 'relative',
-  },
-  cartBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: '#ef4444',
-    borderRadius: 12,
-    width: 24,
-    height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   cartBadgeText: {
     color: 'white',
     fontSize: 12,
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   productImage: {
     width: '100%',
-    height: 120,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    height: 140,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
     resizeMode: 'cover',
   },
   productInfo: {
-    padding: 10,
+    padding: 16,
   },
   productName: {
     fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
+    fontWeight: '700',
+    color: '#1e293b',
+    marginBottom: 6,
+    lineHeight: 22,
   },
   productCategory: {
-    fontSize: 10,
-    color: '#6366f1',
-    backgroundColor: '#f0f0ff',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-    alignSelf: 'flex-start',
-    marginBottom: 4,
+    fontSize: 12,
+    color: '#64748b',
     fontWeight: '500',
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   productDescription: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 10,
+    fontSize: 13,
+    color: '#64748b',
+    lineHeight: 18,
+    marginBottom: 12,
   },
   productFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 5,
   },
   productPrice: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#6366f1',
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#059669',
   },
   addButton: {
-    backgroundColor: '#6366f1',
-    borderRadius: 15,
-    width: 30,
-    height: 30,
+    backgroundColor: '#3b82f6',
+    borderRadius: 12,
+    width: 36,
+    height: 36,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#3b82f6',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   cartActions: {
     flexDirection: 'row',
@@ -649,92 +685,104 @@ const styles = StyleSheet.create({
   quantityControls: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 15,
-    paddingHorizontal: 4,
+    backgroundColor: '#f1f5f9',
+    borderRadius: 20,
+    paddingHorizontal: 6,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
   },
   quantityButton: {
-    backgroundColor: '#6366f1',
-    borderRadius: 12,
-    width: 24,
-    height: 24,
+    backgroundColor: '#3b82f6',
+    borderRadius: 14,
+    width: 28,
+    height: 28,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#3b82f6',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
   },
   quantityText: {
     fontSize: 14,
-    fontWeight: 'bold',
-    marginHorizontal: 8,
+    fontWeight: '700',
+    marginHorizontal: 12,
     minWidth: 20,
     textAlign: 'center',
-  },
-  stockContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  stockText: {
-    fontSize: 12,
-    color: '#666',
-  },
-  outOfStock: {
-    color: '#ef4444',
-    fontWeight: 'bold',
-  },
-  lowStock: {
-    color: '#f59e0b',
-    fontWeight: '600',
+    color: '#1e293b',
   },
   removeButtonContainer: {
     alignItems: 'flex-end',
-    marginTop: 5,
+    marginTop: 8,
   },
   removeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 4,
-    paddingVertical: 2,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    backgroundColor: '#fef2f2',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#fecaca',
   },
   removeButtonText: {
-    fontSize: 10,
-    color: '#ef4444',
-    marginLeft: 2,
+    fontSize: 11,
+    color: '#dc2626',
+    marginLeft: 4,
+    fontWeight: '600',
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 100,
+    paddingTop: 120,
+    paddingHorizontal: 32,
   },
   emptyText: {
-    fontSize: 16,
-    color: '#666',
-    marginTop: 10,
+    fontSize: 18,
+    color: '#64748b',
+    marginTop: 16,
     textAlign: 'center',
+    fontWeight: '500',
+    lineHeight: 26,
   },
   resetButton: {
-    marginTop: 16,
-    backgroundColor: '#6366f1',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
+    marginTop: 24,
+    backgroundColor: '#3b82f6',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 12,
+    shadowColor: '#3b82f6',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
   },
   resetButtonText: {
     color: 'white',
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 16,
+    fontWeight: '700',
   },
   resultsHeader: {
-    backgroundColor: '#f9f9f9',
-    padding: 12,
-    marginBottom: 8,
-    borderRadius: 8,
-    marginHorizontal: 5,
+    backgroundColor: '#f8fafc',
+    padding: 16,
+    marginBottom: 12,
+    borderRadius: 12,
+    marginHorizontal: 6,
+    borderWidth: 1,
+    borderColor: '#e2e8f0',
   },
   resultsText: {
-    fontSize: 12,
-    color: '#666',
+    fontSize: 14,
+    color: '#64748b',
     textAlign: 'center',
-    fontWeight: '500',
+    fontWeight: '600',
   },
 });

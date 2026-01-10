@@ -22,6 +22,7 @@ export default function AdminOrdersScreen({ navigation }) {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [filterStatus, setFilterStatus] = useState('ALL');
+  const [filterLoading, setFilterLoading] = useState(false);
 
   const { authenticatedRequest, user } = useAuth();
   const { getCartItemsCount } = useCart();
@@ -43,9 +44,17 @@ export default function AdminOrdersScreen({ navigation }) {
     loadOrders();
   }, []);
 
+  // Effet pour recharger les commandes quand le filtre change
+  useEffect(() => {
+    if (user?.role === 'ADMIN') {
+      loadOrders();
+    }
+  }, [filterStatus]);
+
   const loadOrders = async () => {
     try {
       setLoading(true);
+      setFilterLoading(true);
       const endpoint = filterStatus === 'ALL' 
         ? '/orders/admin/all' 
         : `/orders/admin/status/${filterStatus}`;
@@ -57,6 +66,7 @@ export default function AdminOrdersScreen({ navigation }) {
       Alert.alert('Erreur', 'Impossible de charger les commandes');
     } finally {
       setLoading(false);
+      setFilterLoading(false);
     }
   };
 
@@ -139,12 +149,15 @@ export default function AdminOrdersScreen({ navigation }) {
               style={[
                 styles.filterButton,
                 isActive && styles.filterButtonActive,
-                { borderColor: status.color }
+                { borderColor: status.color },
+                filterLoading && styles.filterButtonDisabled
               ]}
               onPress={() => {
-                setFilterStatus(status.key);
-                setTimeout(loadOrders, 100);
+                if (!filterLoading) {
+                  setFilterStatus(status.key);
+                }
               }}
+              disabled={filterLoading}
             >
               <View style={styles.filterButtonContent}>
                 <Ionicons 
@@ -536,6 +549,9 @@ const styles = StyleSheet.create({
   filterButtonActive: {
     backgroundColor: '#6366f1',
     borderColor: '#6366f1',
+  },
+  filterButtonDisabled: {
+    opacity: 0.6,
   },
   filterButtonContent: {
     flexDirection: 'row',
