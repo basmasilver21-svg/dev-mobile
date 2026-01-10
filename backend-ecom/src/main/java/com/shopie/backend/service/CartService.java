@@ -31,9 +31,10 @@ public class CartService {
     public CartItem addToCart(User user, CartItemRequest request) {
         Product product = productService.getProductById(request.getProductId());
         
-        if (product.getStock() < request.getQuantite()) {
-            throw new BadRequestException("Stock insuffisant pour ce produit");
-        }
+        // Stock validation disabled - unlimited cart additions allowed
+        // if (product.getStock() < request.getQuantite()) {
+        //     throw new BadRequestException("Stock insuffisant pour ce produit");
+        // }
         
         Optional<CartItem> existingCartItem = cartItemRepository.findByUserAndProduct(user, product);
         
@@ -41,9 +42,10 @@ public class CartService {
             CartItem cartItem = existingCartItem.get();
             int newQuantity = cartItem.getQuantite() + request.getQuantite();
             
-            if (product.getStock() < newQuantity) {
-                throw new BadRequestException("Stock insuffisant pour cette quantité");
-            }
+            // Stock validation disabled
+            // if (product.getStock() < newQuantity) {
+            //     throw new BadRequestException("Stock insuffisant pour cette quantité");
+            // }
             
             cartItem.setQuantite(newQuantity);
             return cartItemRepository.save(cartItem);
@@ -65,9 +67,10 @@ public class CartService {
             throw new BadRequestException("Vous n'êtes pas autorisé à modifier cet article");
         }
         
-        if (cartItem.getProduct().getStock() < quantite) {
-            throw new BadRequestException("Stock insuffisant pour cette quantité");
-        }
+        // Stock validation disabled
+        // if (cartItem.getProduct().getStock() < quantite) {
+        //     throw new BadRequestException("Stock insuffisant pour cette quantité");
+        // }
         
         cartItem.setQuantite(quantite);
         return cartItemRepository.save(cartItem);

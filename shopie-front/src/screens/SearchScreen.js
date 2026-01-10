@@ -23,7 +23,7 @@ export default function SearchScreen({ navigation, route }) {
   const [searchQuery, setSearchQuery] = useState(route.params?.initialQuery || '');
   const [selectedCategory, setSelectedCategory] = useState(route.params?.initialCategory || null);
   const [priceRange, setPriceRange] = useState({ min: '', max: '' });
-  const [sortBy, setSortBy] = useState('name'); // name, price_asc, price_desc, stock
+  const [sortBy, setSortBy] = useState('name'); // name, price_asc, price_desc
 
   const { authenticatedRequest, user } = useAuth();
   const { 
@@ -97,8 +97,6 @@ export default function SearchScreen({ navigation, route }) {
             return parseFloat(a.prix) - parseFloat(b.prix);
           case 'price_desc':
             return parseFloat(b.prix) - parseFloat(a.prix);
-          case 'stock':
-            return b.stock - a.stock;
           case 'name':
           default:
             return a.nom.localeCompare(b.nom);
@@ -220,7 +218,6 @@ export default function SearchScreen({ navigation, route }) {
                   <TouchableOpacity
                     style={styles.addButton}
                     onPress={() => handleAddToCart(item.id)}
-                    disabled={item.stock === 0}
                   >
                     <Ionicons name="add" size={20} color="white" />
                   </TouchableOpacity>
@@ -229,15 +226,9 @@ export default function SearchScreen({ navigation, route }) {
             )}
           </View>
           
-          <View style={styles.stockContainer}>
-            <Text style={[
-              styles.stockText,
-              item.stock === 0 && styles.outOfStock,
-              item.stock < 10 && item.stock > 0 && styles.lowStock
-            ]}>
-              {item.stock === 0 ? 'Rupture de stock' : `Stock: ${item.stock}`}
-            </Text>
-            {isInCart && !isAdmin && (
+          {/* Stock display removed - products always appear available */}
+          {isInCart && !isAdmin && (
+            <View style={styles.removeButtonContainer}>
               <TouchableOpacity
                 style={styles.removeButton}
                 onPress={() => handleRemoveFromCart(item.id)}
@@ -245,8 +236,8 @@ export default function SearchScreen({ navigation, route }) {
                 <Ionicons name="trash-outline" size={14} color="#ef4444" />
                 <Text style={styles.removeButtonText}>Retirer</Text>
               </TouchableOpacity>
-            )}
-          </View>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -368,7 +359,6 @@ export default function SearchScreen({ navigation, route }) {
                   { key: 'name', label: 'Nom' },
                   { key: 'price_asc', label: 'Prix ↑' },
                   { key: 'price_desc', label: 'Prix ↓' },
-                  { key: 'stock', label: 'Stock' },
                 ].map((sort) => (
                   <TouchableOpacity
                     key={sort.key}
@@ -738,6 +728,10 @@ const styles = StyleSheet.create({
   lowStock: {
     color: '#f59e0b',
     fontWeight: '600',
+  },
+  removeButtonContainer: {
+    alignItems: 'flex-end',
+    marginTop: 5,
   },
   removeButton: {
     flexDirection: 'row',

@@ -54,12 +54,12 @@ public class OrderService {
             throw new BadRequestException("Le panier est vide");
         }
         
-        // Vérifier le stock pour tous les articles
-        for (CartItem cartItem : cartItems) {
-            if (cartItem.getProduct().getStock() < cartItem.getQuantite()) {
-                throw new BadRequestException("Stock insuffisant pour le produit: " + cartItem.getProduct().getNom());
-            }
-        }
+        // Stock validation disabled - unlimited orders allowed
+        // for (CartItem cartItem : cartItems) {
+        //     if (cartItem.getProduct().getStock() < cartItem.getQuantite()) {
+        //         throw new BadRequestException("Stock insuffisant pour le produit: " + cartItem.getProduct().getNom());
+        //     }
+        // }
         
         // Calculer le total d'abord
         BigDecimal total = BigDecimal.ZERO;
@@ -89,10 +89,10 @@ public class OrderService {
             
             orderItemRepository.save(orderItem);
             
-            // Mettre à jour le stock
-            Product product = cartItem.getProduct();
-            int newStock = product.getStock() - cartItem.getQuantite();
-            productService.updateStock(product.getId(), newStock);
+            // Stock management disabled - products remain available after orders
+            // Product product = cartItem.getProduct();
+            // int newStock = product.getStock() - cartItem.getQuantite();
+            // productService.updateStock(product.getId(), newStock);
         }
         
         // Vider le panier

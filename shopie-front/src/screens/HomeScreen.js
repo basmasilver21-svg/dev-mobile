@@ -32,7 +32,7 @@ export default function HomeScreen({ navigation }) {
     removeProductFromCart,
     updateCartItem,
     cartItems,
-    getCartItemsCount 
+    getCartItemsCount
   } = useCart();
 
   useEffect(() => {
@@ -240,7 +240,6 @@ export default function HomeScreen({ navigation }) {
                   <TouchableOpacity
                     style={styles.addButton}
                     onPress={() => handleAddToCart(item.id)}
-                    disabled={item.stock === 0}
                   >
                     <Ionicons name="add" size={20} color="white" />
                   </TouchableOpacity>
@@ -249,7 +248,8 @@ export default function HomeScreen({ navigation }) {
             )}
           </View>
           
-          <View style={styles.stockContainer}>
+          {/* Stock display removed - products always appear available */}
+          {/* <View style={styles.stockContainer}>
             <Text style={[
               styles.stockText,
               item.stock === 0 && styles.outOfStock,
@@ -266,7 +266,19 @@ export default function HomeScreen({ navigation }) {
                 <Text style={styles.removeButtonText}>Retirer</Text>
               </TouchableOpacity>
             )}
-          </View>
+          </View> */}
+          
+          {isInCart && !isAdmin && (
+            <View style={styles.removeButtonContainer}>
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => handleRemoveFromCart(item.id)}
+              >
+                <Ionicons name="trash-outline" size={14} color="#ef4444" />
+                <Text style={styles.removeButtonText}>Retirer</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
     );
@@ -672,6 +684,10 @@ const styles = StyleSheet.create({
   lowStock: {
     color: '#f59e0b',
     fontWeight: '600',
+  },
+  removeButtonContainer: {
+    alignItems: 'flex-end',
+    marginTop: 5,
   },
   removeButton: {
     flexDirection: 'row',

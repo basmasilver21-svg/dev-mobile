@@ -5,7 +5,7 @@ const getBaseUrl = () => {
   // For physical device, use your computer's IP address
   
   // You can uncomment the appropriate line based on your setup:
-  return 'http://192.168.1.123:8081/api';        // Physical device/Expo Go
+  return 'http://10.22.62.57:8081/api';        // Physical device/Expo Go
   // return 'http://10.0.2.2:8081/api';       // Android emulator
   // return 'http://localhost:8081/api';      // iOS simulator
 };

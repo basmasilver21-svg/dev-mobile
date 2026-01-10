@@ -21,7 +21,7 @@ export default function CheckoutScreen({ navigation }) {
     adresse: ''
   });
   const [errors, setErrors] = useState({});
-  const { cartItems, getCartTotal, clearCart } = useCart();
+  const { cartItems, getCartTotal, clearCart, loadCart } = useCart();
   const { authenticatedRequest, user } = useAuth();
 
   const paymentMethods = [
@@ -99,6 +99,9 @@ export default function CheckoutScreen({ navigation }) {
       if (!orderResponse || !orderResponse.id) {
         throw new Error('Erreur lors de la création de la commande');
       }
+
+      // Recharger le panier (il devrait être vide maintenant)
+      await loadCart();
 
       // Afficher le succès et naviguer
       const paymentMethodText = selectedPaymentMethod === 'CARTE' ? 'Carte bancaire' : 'Espèces';

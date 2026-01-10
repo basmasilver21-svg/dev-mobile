@@ -37,9 +37,7 @@ export default function ProductDetailScreen({ route, navigation }) {
   };
 
   const increaseQuantity = () => {
-    if (quantity < product.stock) {
-      setQuantity(quantity + 1);
-    }
+    setQuantity(quantity + 1);
   };
 
   const decreaseQuantity = () => {
@@ -67,19 +65,7 @@ export default function ProductDetailScreen({ route, navigation }) {
         
         <View style={styles.priceContainer}>
           <Text style={styles.price}>{product.prix?.toFixed(2)} €</Text>
-          <View style={styles.stockContainer}>
-            <Ionicons 
-              name={product.stock > 0 ? "checkmark-circle" : "close-circle"} 
-              size={20} 
-              color={product.stock > 0 ? "#10b981" : "#ef4444"} 
-            />
-            <Text style={[
-              styles.stockText,
-              { color: product.stock > 0 ? "#10b981" : "#ef4444" }
-            ]}>
-              {product.stock > 0 ? `${product.stock} en stock` : 'Rupture de stock'}
-            </Text>
-          </View>
+          {/* Stock display removed - products always appear available */}
         </View>
 
         <Text style={styles.sectionTitle}>Description</Text>
@@ -87,49 +73,35 @@ export default function ProductDetailScreen({ route, navigation }) {
           {product.description || 'Aucune description disponible.'}
         </Text>
 
-        {product.stock > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>Quantité</Text>
-            <View style={styles.quantityContainer}>
-              <TouchableOpacity
-                style={[styles.quantityButton, quantity <= 1 && styles.quantityButtonDisabled]}
-                onPress={decreaseQuantity}
-                disabled={quantity <= 1}
-              >
-                <Ionicons name="remove" size={20} color={quantity <= 1 ? "#ccc" : "#6366f1"} />
-              </TouchableOpacity>
-              
-              <Text style={styles.quantityText}>{quantity}</Text>
-              
-              <TouchableOpacity
-                style={[styles.quantityButton, quantity >= product.stock && styles.quantityButtonDisabled]}
-                onPress={increaseQuantity}
-                disabled={quantity >= product.stock}
-              >
-                <Ionicons name="add" size={20} color={quantity >= product.stock ? "#ccc" : "#6366f1"} />
-              </TouchableOpacity>
-            </View>
+        <Text style={styles.sectionTitle}>Quantité</Text>
+        <View style={styles.quantityContainer}>
+          <TouchableOpacity
+            style={[styles.quantityButton, quantity <= 1 && styles.quantityButtonDisabled]}
+            onPress={decreaseQuantity}
+            disabled={quantity <= 1}
+          >
+            <Ionicons name="remove" size={20} color={quantity <= 1 ? "#ccc" : "#6366f1"} />
+          </TouchableOpacity>
+          
+          <Text style={styles.quantityText}>{quantity}</Text>
+          
+          <TouchableOpacity
+            style={styles.quantityButton}
+            onPress={increaseQuantity}
+          >
+            <Ionicons name="add" size={20} color="#6366f1" />
+          </TouchableOpacity>
+        </View>
 
-            <TouchableOpacity
-              style={styles.addToCartButton}
-              onPress={handleAddToCart}
-            >
-              <Ionicons name="cart" size={20} color="white" style={styles.buttonIcon} />
-              <Text style={styles.addToCartText}>
-                Ajouter au panier - {(product.prix * quantity).toFixed(2)} €
-              </Text>
-            </TouchableOpacity>
-          </>
-        )}
-
-        {product.stock === 0 && (
-          <View style={styles.outOfStockContainer}>
-            <Ionicons name="alert-circle-outline" size={24} color="#ef4444" />
-            <Text style={styles.outOfStockText}>
-              Ce produit n'est actuellement pas disponible
-            </Text>
-          </View>
-        )}
+        <TouchableOpacity
+          style={styles.addToCartButton}
+          onPress={handleAddToCart}
+        >
+          <Ionicons name="cart" size={20} color="white" style={styles.buttonIcon} />
+          <Text style={styles.addToCartText}>
+            Ajouter au panier - {(product.prix * quantity).toFixed(2)} €
+          </Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
