@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { API_CONFIG } from '../config/api';
+import Logo from '../components/Logo';
 
 export default function HomeScreen({ navigation }) {
   const [products, setProducts] = useState([]);
@@ -268,7 +269,10 @@ export default function HomeScreen({ navigation }) {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <Text style={styles.title}>Shopie</Text>
+          <View style={styles.titleContainer}>
+            <Logo size={32} style={styles.logo} />
+            <Text style={styles.title}>Shopie</Text>
+          </View>
           {user?.role !== 'ADMIN' && (
             <TouchableOpacity 
               style={styles.cartButton}
@@ -439,6 +443,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logo: {
+    marginRight: 12,
   },
   title: {
     fontSize: 32,

@@ -13,6 +13,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
+import Logo from '../components/Logo';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -52,6 +53,7 @@ export default function LoginScreen({ navigation }) {
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.header}>
+            <Logo size={80} style={styles.logo} />
             <Text style={styles.title}>Shopie</Text>
             <Text style={styles.subtitle}>Bienvenue !</Text>
           </View>
@@ -139,6 +141,9 @@ const styles = StyleSheet.create({
   header: {
     alignItems: 'center',
     marginBottom: 60,
+  },
+  logo: {
+    marginBottom: 20,
   },
   title: {
     fontSize: 42,

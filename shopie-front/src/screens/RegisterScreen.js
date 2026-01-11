@@ -16,6 +16,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
+import Logo from '../components/Logo';
 
 const { height } = Dimensions.get('window');
 
@@ -78,14 +79,7 @@ export default function RegisterScreen({ navigation }) {
         </LinearGradient>
           {/* Header Section */}
           <View style={styles.headerSection}>
-            <View style={styles.logoContainer}>
-              <LinearGradient
-                colors={['#2563eb', '#1d4ed8']}
-                style={styles.logoGradient}
-              >
-                <Ionicons name="storefront" size={32} color="white" />
-              </LinearGradient>
-            </View>
+            <Logo size={70} style={styles.logoStyle} />
             <Text style={styles.brandName}>Shopie</Text>
             <Text style={styles.welcomeText}>Créez votre compte</Text>
             <Text style={styles.subtitleText}>
@@ -321,23 +315,8 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 40,
   },
-  logoContainer: {
+  logoStyle: {
     marginBottom: 16,
-  },
-  logoGradient: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#2563eb',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
   },
   brandName: {
     fontSize: 32,
