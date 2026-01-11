@@ -10,12 +10,14 @@ import {
   Platform,
   ScrollView,
   Dimensions,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../context/AuthContext';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
 export default function RegisterScreen({ navigation }) {
   const [nom, setNom] = useState('');
@@ -26,6 +28,11 @@ export default function RegisterScreen({ navigation }) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { register } = useAuth();
+
+  // Références pour la navigation entre les champs
+  const emailRef = React.useRef(null);
+  const passwordRef = React.useRef(null);
+  const confirmPasswordRef = React.useRef(null);
 
   const handleRegister = async () => {
     if (!nom || !email || !motDePasse || !confirmPassword) {
@@ -54,24 +61,21 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#1e3a8a', '#3b82f6']}
-        style={styles.backgroundGradient}
+      <ScrollView 
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="always"
       >
-        {/* Decorative circles */}
-        <View style={styles.circle1} />
-        <View style={styles.circle2} />
-        <View style={styles.circle3} />
-      </LinearGradient>
-
-      <KeyboardAvoidingView 
-        style={styles.keyboardContainer} 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <ScrollView 
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+        <LinearGradient
+          colors={['#1e3a8a', '#3b82f6']}
+          style={styles.backgroundGradient}
         >
+          {/* Decorative circles */}
+          <View style={styles.circle1} />
+          <View style={styles.circle2} />
+          <View style={styles.circle3} />
+        </LinearGradient>
           {/* Header Section */}
           <View style={styles.headerSection}>
             <View style={styles.logoContainer}>
@@ -96,62 +100,58 @@ export default function RegisterScreen({ navigation }) {
               <View style={styles.formDivider} />
             </View>
 
+            {/* Formulaire simplifié */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Nom complet</Text>
-              <View style={[styles.inputContainer, nom && styles.inputFocused]}>
-                <View style={styles.inputIconContainer}>
-                  <Ionicons name="person-outline" size={20} color="#2563eb" />
-                </View>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Entrez votre nom complet"
-                  value={nom}
-                  onChangeText={setNom}
-                  placeholderTextColor="#9ca3af"
-                />
-              </View>
+              <TextInput
+                style={styles.simpleInput}
+                placeholder="Entrez votre nom complet"
+                value={nom}
+                onChangeText={setNom}
+                placeholderTextColor="#999"
+                autoComplete="name"
+                textContentType="name"
+              />
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Adresse email</Text>
-              <View style={[styles.inputContainer, email && styles.inputFocused]}>
-                <View style={styles.inputIconContainer}>
-                  <Ionicons name="mail-outline" size={20} color="#2563eb" />
-                </View>
-                <TextInput
-                  style={styles.input}
-                  placeholder="votre@email.com"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  placeholderTextColor="#9ca3af"
-                />
-              </View>
+              <TextInput
+                ref={emailRef}
+                style={styles.simpleInput}
+                placeholder="votre@email.com"
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                placeholderTextColor="#999"
+                autoComplete="email"
+                textContentType="emailAddress"
+              />
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Mot de passe</Text>
-              <View style={[styles.inputContainer, motDePasse && styles.inputFocused]}>
-                <View style={styles.inputIconContainer}>
-                  <Ionicons name="lock-closed-outline" size={20} color="#2563eb" />
-                </View>
+              <View style={styles.passwordContainer}>
                 <TextInput
-                  style={styles.input}
+                  ref={passwordRef}
+                  style={styles.passwordInput}
                   placeholder="Minimum 6 caractères"
                   value={motDePasse}
                   onChangeText={setMotDePasse}
                   secureTextEntry={!showPassword}
-                  placeholderTextColor="#9ca3af"
+                  placeholderTextColor="#999"
+                  autoComplete="password-new"
+                  textContentType="newPassword"
                 />
                 <TouchableOpacity
                   onPress={() => setShowPassword(!showPassword)}
-                  style={styles.eyeButton}
+                  style={styles.simpleEyeButton}
                 >
                   <Ionicons 
                     name={showPassword ? "eye-outline" : "eye-off-outline"} 
                     size={20} 
-                    color="#9ca3af" 
+                    color="#1e40af" 
                   />
                 </TouchableOpacity>
               </View>
@@ -159,26 +159,26 @@ export default function RegisterScreen({ navigation }) {
 
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Confirmer le mot de passe</Text>
-              <View style={[styles.inputContainer, confirmPassword && styles.inputFocused]}>
-                <View style={styles.inputIconContainer}>
-                  <Ionicons name="shield-checkmark-outline" size={20} color="#2563eb" />
-                </View>
+              <View style={styles.passwordContainer}>
                 <TextInput
-                  style={styles.input}
+                  ref={confirmPasswordRef}
+                  style={styles.passwordInput}
                   placeholder="Répétez votre mot de passe"
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
                   secureTextEntry={!showConfirmPassword}
-                  placeholderTextColor="#9ca3af"
+                  placeholderTextColor="#999"
+                  autoComplete="password-new"
+                  textContentType="newPassword"
                 />
                 <TouchableOpacity
                   onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                  style={styles.eyeButton}
+                  style={styles.simpleEyeButton}
                 >
                   <Ionicons 
                     name={showConfirmPassword ? "eye-outline" : "eye-off-outline"} 
                     size={20} 
-                    color="#9ca3af" 
+                    color="#1e40af" 
                   />
                 </TouchableOpacity>
               </View>
@@ -257,7 +257,6 @@ export default function RegisterScreen({ navigation }) {
             </Text>
           </View>
         </ScrollView>
-      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -266,6 +265,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f8fafc',
+  },
+  scrollContainer: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
   },
   backgroundGradient: {
     position: 'absolute',
@@ -307,6 +314,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 24,
+    paddingBottom: 20,
   },
   headerSection: {
     alignItems: 'center',
@@ -376,7 +384,7 @@ const styles = StyleSheet.create({
   },
   formDivider: {
     height: 3,
-    backgroundColor: '#2563eb',
+    backgroundColor: '#1e40af',
     borderRadius: 2,
     width: 40,
   },
@@ -384,51 +392,36 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   inputLabel: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#374151',
+    color: '#1e40af',
     marginBottom: 8,
-    letterSpacing: 0.3,
   },
-  inputContainer: {
+  simpleInput: {
+    borderWidth: 2,
+    borderColor: '#1e40af',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: 'white',
+    color: '#1f2937',
+  },
+  passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#e5e7eb',
-    borderRadius: 16,
-    backgroundColor: '#f9fafb',
-    paddingHorizontal: 16,
-    height: 56,
-    transition: 'all 0.2s ease',
+    borderColor: '#1e40af',
+    borderRadius: 8,
+    backgroundColor: 'white',
   },
-  inputFocused: {
-    borderColor: '#2563eb',
-    backgroundColor: '#eff6ff',
-    shadowColor: '#2563eb',
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  inputIconContainer: {
-    width: 24,
-    height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  input: {
+  passwordInput: {
     flex: 1,
+    padding: 12,
     fontSize: 16,
     color: '#1f2937',
-    fontWeight: '500',
   },
-  eyeButton: {
-    padding: 8,
-    marginLeft: 8,
+  simpleEyeButton: {
+    padding: 12,
   },
   passwordStrength: {
     flexDirection: 'row',
@@ -448,7 +441,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   strengthBarActive: {
-    backgroundColor: '#1d4ed8',
+    backgroundColor: '#1e40af',
   },
   strengthText: {
     fontSize: 12,
